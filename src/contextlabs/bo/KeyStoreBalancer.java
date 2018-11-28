@@ -2,14 +2,34 @@ package contextlabs.bo;
 
 import java.util.*;
 
+/**
+ * Class KeyStoreBalancer uses a concrete Factory pattern to implement the methods specified in the
+ * abstract parent class in Master.java
+ */
 public class KeyStoreBalancer extends Master {
 
-    //Maintain a list of tablets
+    /**
+     * Maintain a list of tablet objects
+     */
     private List<Tablet> availableTablets = new ArrayList<Tablet>();
 
-    //Maintain a unique listing of TabletServers
+    /**
+     * Maintain a unique listing of TabletServers.  Duplicate listings of
+     * tabletservers are prevented by using a Set
+     */
     private Set<String> availableTabletServers = new HashSet<String>();
 
+    /**
+     * Use a SortedMap to maintain an ordered key, value air listing of the
+     * tablets with their associated tabletservers.
+     *
+     * Key - a Tablet object containing the name, startIndex, and endIndex
+     * Value - a string specifying the name of the associated TabletServer
+     *
+     * Note: The use a Tablet  or the Key in the map requires us to implement a Comparator
+     * to maintain the ordering of the SortedMap.  TabletComparator, an inner class of this class,
+     * maintains the ordering based on the startIndex of the tablet
+     */
     public static SortedMap<Tablet, String> theBalancer
             = new TreeMap<Tablet, String>(new TabletComparator());
 
@@ -19,8 +39,8 @@ public class KeyStoreBalancer extends Master {
      * which invokes the super class, we cannot check parameter values passed to the parent class.
      * We therefore create a public method wrapper and do parameter checking on the parameters before
      * invoking this private class constructor.
-     * @param numTablets
-     * @param serverNames
+     * @param numTablets - number of tablets to create with equal ranges
+     * @param serverNames - a list of tabletservers
      */
     private KeyStoreBalancer(int numTablets, List<String> serverNames) {
 
@@ -48,7 +68,7 @@ public class KeyStoreBalancer extends Master {
             }
         } // end for loop
 
-        // Now track available
+        // Now track available TablsetServers
         availableTabletServers.addAll(serverNames);
     }
 
@@ -97,7 +117,6 @@ public class KeyStoreBalancer extends Master {
             a++;
         }
 
-        //System.out.println(theBalancer.toString());
     }
 
     @Override
@@ -187,8 +206,24 @@ public class KeyStoreBalancer extends Master {
 }
 
 
+/**
+ * TabletComparator, an inner class of KeyStoreBalancer, is a comparator
+ * that is used t0 maintain the ordering of Tablet objects based on the
+ * startIndex of the Tablet.  The range of a tablet is sequentially increasing with
+ * unique intervals, therefore ordering by the startIndex is sufficient to maintain
+ * a constant ordering of tablet objects.  The name of Tablet object was NOT chosed as
+ * a basis of comparison because the names of the tablet are not necessarily in alphabetical
+ * order.
+ */
 class TabletComparator implements Comparator<Tablet>{
 
+    /**
+     * The compare method is overriden to implement the actual comparison of Tablet oobjecs
+     *  based on the startIndex.
+     * @param e1 - the Tablet object used as a reference
+     * @param e2  - the Tablet object used for comparison
+     * @return - 1 for greater than, -1 for less than
+     */
     @Override
     public int compare(Tablet e1, Tablet e2) {
         if( e1.getMinIndex() > e2.getMinIndex() ){

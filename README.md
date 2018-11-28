@@ -54,7 +54,13 @@ This code project was authored in IntelliJ v 2018.1 Community, and this GitHub d
   
   - __(optional)__  TabletServer.java .  I did not implement this object because the initial model only uses a List of names of TabletServers. If tabletservers had more characteristics in addition to a name, then a full TabletServer object with the appropriate member variables is warranted.  
  
-  - KeyStoreBalancer.java .  is the concrete Factory Pattern implementation of the load balancer. It is an extension of the abstract class in Master.java. It uses a SortedMap
+  - KeyStoreBalancer.java .  is the concrete Factory Pattern implementation of the load balancer. It is an extension of the abstract class in Master.java. The **crucial data structure** for the implmentation of a Load Balancer is a **SortedMap** to maintain the key ordering of tablets based on their minIndex.  The tablets are essentially ordered in increasing order of their intervals which will not change after their first instantiation.
+  
+  ** The Load Balancing Algorithm for the Load Balancer **
+    
+    The most straight-forward way to implement load balancing in this simulation is to use a round-robin approach.  Place a Tablet on each available TabletServer; if there are Tablets still remaining, start from the beginning again and place the tablets on the servers.
+It gives equal priority to the loads of all the tablets through the equal distribution of ranges.  If we wish to extend the load balancing to switch between more than one algorithm, then I would extend the implementation with another directory, such as src/contextlabs/algorithms. A design pattern, such as the [Visitor Pattern](https://en.wikipedia.org/wiki/Visitor_pattern) , could be implemented as way of separating an algorithm from an object structure on which it operates.
+
   
   **The Load Balancaer and Multi-threading Considerations**
   

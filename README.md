@@ -30,7 +30,7 @@ Your rebalancing behavior should minimize reassignments of tablets from one serv
 
   This exercise was compiled and tested against the Java version stated above.
   
-**Project organization **
+**Project Organization **
 
 This code project was authored in IntelliJ v 2018.1 Community, and this GitHub directory contains all of the project artefacts and libraries needed to compile and run the project.  It is structured in a conventional hierarchical enterprise package format. 
 
@@ -41,7 +41,7 @@ This code project was authored in IntelliJ v 2018.1 Community, and this GitHub d
 - testing directory
   - test/contextlabs/bo .  Test objects corresponding to POJOs in the src directory live here
 
-**Test coverage**
+**Test Coverage**
 
   Automated unit tests are authored with JUnit v4.12 to use the standardized library of annotations.  The library used for testing, junit-4.12.jar is included in the lib directory or it can be directly downloaded from the JUnit website and incorporated into the classpath of the project.
   

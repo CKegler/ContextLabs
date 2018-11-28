@@ -4,7 +4,9 @@ import java.util.*;
 
 /**
  * Class KeyStoreBalancer uses a concrete Factory pattern to implement the methods specified in the
- * abstract parent class in Master.java
+ * abstract parent class in Master.java.  To simulate the load balancing, we maintain (1) a list of the
+ * available tablets (2) a separate listing of the names of TabletServers - using a Set to ensure uniqueneess
+ * and (3) a SortedMap  which creates an ordered association of Tablets (the key) to TabletServers (the value)
  */
 public class KeyStoreBalancer extends Master {
 
@@ -28,7 +30,10 @@ public class KeyStoreBalancer extends Master {
      *
      * Note: The use a Tablet  or the Key in the map requires us to implement a Comparator
      * to maintain the ordering of the SortedMap.  TabletComparator, an inner class of this class,
-     * maintains the ordering based on the startIndex of the tablet
+     * maintains the ordering based on the startIndex of the tablet.
+     *
+     * We also specify the data structure as static, such that it has one instance belonging
+     * to the class rather than potentially multiple class instances.
      */
     public static SortedMap<Tablet, String> theBalancer
             = new TreeMap<Tablet, String>(new TabletComparator());
@@ -98,6 +103,10 @@ public class KeyStoreBalancer extends Master {
      * on the available TabletServers. One tablet is placed on each TabletServer. If there
      * are more tablets than servers, then we start at the beginning placing the remaining tablets on
      * TabletServers.
+     *
+     * This method is synchronized so that in a multi-threaded context, only one thread at a time
+     * can acquire the lock to regenerate the association between the avilable tablets and the
+     * TabletServers on which they are placed.
      */
 
     public synchronized void balanceLoad(){
@@ -208,7 +217,7 @@ public class KeyStoreBalancer extends Master {
 
 /**
  * TabletComparator, an inner class of KeyStoreBalancer, is a comparator
- * that is used t0 maintain the ordering of Tablet objects based on the
+ * that is used to maintain the ordering of Tablet objects based on the
  * startIndex of the Tablet.  The range of a tablet is sequentially increasing with
  * unique intervals, therefore ordering by the startIndex is sufficient to maintain
  * a constant ordering of tablet objects.  The name of Tablet object was NOT chosed as
